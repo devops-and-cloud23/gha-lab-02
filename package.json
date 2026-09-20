@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node app.js",
-    "test": "node --test && npm test",
+    "test": "node --test",
     "build": "mkdir -p dist && cp app.js dist/app.js"
   }
 }
