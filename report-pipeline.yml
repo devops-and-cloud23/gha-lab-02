@@ -1,0 +1,62 @@
+# Workflow name
+name: Lab 2 - Report
+
+# Workflow triggers
+on:
+  workflow_dispatch:   # Manual trigger from GitHub Actions
+
+  push:
+    branches: [ main ] # Trigger on push to main
+
+# Workflow jobs
+jobs:
+
+  # Job that runs tests and generates the report
+  test-report:
+
+    # GitHub-hosted Ubuntu runner
+    runs-on: ubuntu-latest
+
+    # Environment variables available to all job steps
+    env:
+      ENVIRONMENT: test
+      APP_NAME: gha-lab-02-report
+
+    # Job steps
+    steps:
+
+      # Download repository files to the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the required Node.js version
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20   # Node.js version
+          # cache: 'npm'     # Optional npm dependency cache
+
+      # Install project dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Run application tests
+      - name: Run tests
+        run: npm test
+
+      # Create the test report file
+      - name: Generate test report
+        run: |
+          mkdir -p reports
+          echo "Application: $APP_NAME" > reports/test-report.txt
+          echo "Environment: $ENVIRONMENT" >> reports/test-report.txt
+          echo "Tests: PASSED" >> reports/test-report.txt
+          echo "Generated at: $(date)" >> reports/test-report.txt
+          cat reports/test-report.txt
+
+      # Save the test report as a GitHub artifact
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report                  # Artifact name
+          path: reports/test-report.txt      # File to upload
